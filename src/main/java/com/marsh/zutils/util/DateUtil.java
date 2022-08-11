@@ -2,8 +2,10 @@ package com.marsh.zutils.util;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.TimeZone;
 
 /**
@@ -41,4 +43,8 @@ public class DateUtil {
         return time.toInstant(ZoneOffset.of("+8")).toEpochMilli();
     }
 
+
+    public static Date toDate(LocalDateTime time) {
+        return Date.from(time.atZone(ZoneId.systemDefault()).toInstant());
+    }
 }

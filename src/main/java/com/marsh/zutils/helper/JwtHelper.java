@@ -8,8 +8,10 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.marsh.zutils.exception.BaseBizException;
 import com.marsh.zutils.exception.BaseErrorCode;
 import com.marsh.zutils.property.JwtProperties;
+import com.marsh.zutils.util.DateUtil;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -28,16 +30,16 @@ public class JwtHelper {
                 "alg", jwtProperties.getAlg(),
                 "typ", "JWT"
         );
-        var time = System.currentTimeMillis();
+        var now = LocalDateTime.now();
         try {
             var algorithm = Algorithm.HMAC256(jwtProperties.getSecret());
             var jb = JWT.create()
                     .withIssuer(jwtProperties.getIssuer())
                     .withHeader(header)
-                    .withIssuedAt(new Date(time))
+                    .withIssuedAt(DateUtil.toDate(now))
                     .withSubject(subject)
                     .withAudience(audience)
-                    .withExpiresAt(new Date(time + expireDays * 1000 * 60 * 60 * 24))
+                    .withExpiresAt(DateUtil.toDate(now.plusDays(30)))
                     .withAudience();
             claims.forEach(jb::withClaim);
             return jb.sign(algorithm);
