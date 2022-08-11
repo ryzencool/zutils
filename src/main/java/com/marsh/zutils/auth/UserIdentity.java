@@ -24,7 +24,7 @@ public class UserIdentity {
 
     final UserIdentity identity(DecodedJWT claims) {
         UserIdentity userIdentity = extend(claims);
-        Integer userId = claims.getClaim("userId").asInt();
+        Integer userId = Integer.valueOf(claims.getClaim("userId").asString());
         userIdentity.setUserId(userId);
         AuthUserPool.POOL.set(userIdentity);
         return userIdentity;

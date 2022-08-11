@@ -39,7 +39,7 @@ public class JwtHelper {
                     .withIssuedAt(DateUtil.toDate(now))
                     .withSubject(subject)
                     .withAudience(audience)
-                    .withExpiresAt(DateUtil.toDate(now.plusDays(30)))
+                    .withExpiresAt(DateUtil.toDate(now.plusDays(expireDays)))
                     .withAudience();
             claims.forEach(jb::withClaim);
             return jb.sign(algorithm);
