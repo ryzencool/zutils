@@ -4,10 +4,7 @@ package com.marsh.zutils.auth;
 import com.marsh.zutils.constant.BaseConstant;
 import com.marsh.zutils.exception.BaseBizException;
 import com.marsh.zutils.exception.BaseError;
-import com.marsh.zutils.util.JWTUtil;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
+import com.marsh.zutils.helper.JwtHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -19,6 +16,11 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Slf4j
 public class UserIdentityResolver implements HandlerMethodArgumentResolver {
 
+    private final JwtHelper jwtHelper;
+
+    public UserIdentityResolver(JwtHelper jwtHelper) {
+        this.jwtHelper = jwtHelper;
+    }
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -34,13 +36,7 @@ public class UserIdentityResolver implements HandlerMethodArgumentResolver {
         }
 
         String token = bear.substring(7);
-        Claims claims;
-        try {
-            claims = JWTUtil.parse(token);
-        } catch (ExpiredJwtException | MalformedJwtException ex) {
-            throw new BaseBizException(BaseError.EXPIRED_ACCESS_TOKEN);
-        }
-
+        var claims = jwtHelper.decode(token);
 
         return ((UserIdentity) parameter.getParameterType().getDeclaredConstructor().newInstance()).identity(claims);
     }

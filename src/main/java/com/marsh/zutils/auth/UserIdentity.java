@@ -1,6 +1,6 @@
 package com.marsh.zutils.auth;
 
-import io.jsonwebtoken.Claims;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,15 +21,10 @@ public class UserIdentity {
      */
     private Integer userId;
 
-    /**
-     * 用户名称
-     */
-    private String username;
 
-
-    final UserIdentity identity(Claims claims) {
+    final UserIdentity identity(DecodedJWT claims) {
         UserIdentity userIdentity = extend(claims);
-        Integer userId = Integer.valueOf(claims.get("jti").toString());
+        Integer userId = claims.getClaim("userId").asInt();
         userIdentity.setUserId(userId);
         AuthUserPool.POOL.set(userIdentity);
         return userIdentity;
@@ -38,7 +33,7 @@ public class UserIdentity {
     /**
      * 平台继承UserIdentity，添加自己token种需要的属性，在该方法中拓展
      */
-    protected UserIdentity extend(Claims claims) {
+    protected UserIdentity extend(DecodedJWT claims) {
         return new UserIdentity();
     }
 }
